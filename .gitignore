@@ -1,0 +1,12 @@
+.work/
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+data/
+.env
+node_modules/
+playwright-report/
+test-results/

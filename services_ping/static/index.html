@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#101827">
+  <title>Services Ping</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#targets">К списку сервисов</a>
+  <header class="topbar">
+    <div class="brand" aria-label="Services Ping"><span class="brand-mark" aria-hidden="true">⌁</span><span>Services Ping</span></div>
+    <div class="header-actions">
+      <span id="last-update" class="muted" aria-live="polite">Подключение…</span>
+      <button id="manual-check" class="button button-quiet" type="button" data-testid="check-button">Проверить сейчас</button>
+      <button id="pause-toggle" class="button button-quiet" type="button" data-testid="pause-button">Пауза</button>
+      <button id="open-settings" class="icon-button" type="button" aria-label="Настройки" title="Настройки" data-testid="settings-button">⚙</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="backend-banner" class="banner banner-backend" hidden role="alert" data-testid="backend-disconnected">
+      <strong>Нет связи с локальным монитором.</strong><span>Статус интернета неизвестен: убедитесь, что процесс Services Ping запущен.</span>
+      <button id="retry-connection" class="text-button" type="button">Повторить</button>
+    </section>
+    <section id="connectivity-banner" class="connectivity-card is-checking" aria-live="polite" data-testid="internet-banner">
+      <div class="connectivity-main">
+        <span id="connectivity-dot" class="state-dot" aria-hidden="true"></span>
+        <div><p class="eyebrow">Связность</p><h1 id="connectivity-title">Проверяем интернет…</h1><p id="connectivity-message" class="connectivity-message">Опрашиваем независимые опорные адреса</p></div>
+      </div>
+      <div class="connectivity-meta"><span id="connectivity-latency">—</span><span id="connectivity-time">ещё нет результата</span></div>
+    </section>
+
+    <section class="reference-section" aria-labelledby="references-heading">
+      <div class="section-heading"><div><p class="eyebrow">Диагностика</p><h2 id="references-heading">Опорные адреса</h2></div><p class="muted">Один ответ не доказывает работу всех сервисов.</p></div>
+      <div id="references" class="reference-grid" data-testid="reference-diagnostics"></div>
+    </section>
+
+    <section id="targets" class="targets-section" aria-labelledby="targets-heading">
+      <div class="section-heading targets-heading"><div><p class="eyebrow">Наблюдение</p><h2 id="targets-heading">Сервисы</h2><p id="targets-summary" class="muted">Загрузка целей…</p></div><button id="add-target" class="button button-primary" type="button" data-testid="add-target">+ Добавить цель</button></div>
+      <div id="pause-note" class="inline-note" hidden><strong>Автопроверки на паузе.</strong> Ручной запуск выполнит один цикл и сохранит паузу.</div>
+      <div id="target-groups" class="target-groups" data-testid="target-groups"></div>
+      <div id="empty-targets" class="empty-state" hidden><strong>Пока нет целей.</strong><span>Добавьте сайт, TCP-порт, VPN-адрес или ICMP-хост.</span><button class="button button-primary" type="button" data-action="add-target">Добавить первую цель</button></div>
+    </section>
+
+    <section class="events-section" aria-labelledby="events-heading">
+      <div class="section-heading"><div><p class="eyebrow">Журнал</p><h2 id="events-heading">Последние изменения</h2></div><button id="refresh-events" class="button button-quiet" type="button">Обновить</button></div>
+      <ol id="events" class="events" data-testid="events"></ol>
+    </section>
+  </main>
+
+  <footer>Services Ping работает только на этом устройстве · <button id="notification-button" class="text-button" type="button" data-testid="browser-notifications">Включить уведомления браузера</button></footer>
+
+  <dialog id="target-dialog" class="dialog" aria-labelledby="target-dialog-title" data-testid="target-dialog">
+    <form id="target-form" method="dialog" novalidate>
+      <div class="dialog-header"><div><p class="eyebrow">Цель</p><h2 id="target-dialog-title">Новая цель</h2></div><button class="icon-button" type="button" data-close="target-dialog" aria-label="Закрыть">×</button></div>
+      <input id="target-id" name="id" type="hidden">
+      <div class="form-grid">
+        <label>Название<input id="target-name" name="name" maxlength="100" required autocomplete="off" placeholder="Мой VPS" data-testid="target-name"></label>
+        <label>Группа<input id="target-group" name="group" maxlength="100" autocomplete="off" placeholder="Серверы" data-testid="target-group"></label>
+        <label>Тип проверки<select id="target-kind" name="kind" data-testid="target-kind"><option value="http">HTTP(S)</option><option value="tcp">TCP</option><option value="icmp">ICMP</option></select></label>
+        <label id="address-label">Адрес<input id="target-address" name="address" maxlength="2048" required autocomplete="off" placeholder="https://example.com/" data-testid="target-address"><small id="address-help">HTTP/HTTPS адрес без логина и пароля</small></label>
+        <label>Интервал, сек.<input id="target-interval" name="interval" type="number" min="3" max="3600" step="1" required></label>
+        <label>Таймаут, сек.<input id="target-timeout" name="timeout" type="number" min="0.2" max="15" step="0.1" required></label>
+        <label class="span-all">Ожидаемые HTTP-статусы<input id="target-statuses" name="statuses" inputmode="numeric" autocomplete="off" placeholder="200, 204"><small>Оставьте пустым для проверки доступности. Используется только для HTTP.</small></label>
+        <label class="toggle span-all"><input id="target-enabled" name="enabled" type="checkbox" checked><span>Включить проверки этой цели</span></label>
+      </div>
+      <p id="target-form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button class="button button-quiet" type="button" data-close="target-dialog">Отмена</button><button id="save-target" class="button button-primary" type="submit" data-testid="target-save">Сохранить</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" class="dialog dialog-wide" aria-labelledby="settings-title" data-testid="settings-dialog">
+    <form id="settings-form" method="dialog" novalidate>
+      <div class="dialog-header"><div><p class="eyebrow">Конфигурация</p><h2 id="settings-title">Настройки</h2></div><button class="icon-button" type="button" data-close="settings-dialog" aria-label="Закрыть">×</button></div>
+      <fieldset><legend>Расписание и хранение</legend><div class="form-grid">
+        <label>Интернет, сек.<input name="internet_interval_s" type="number" min="1" max="60" step="1" required></label>
+        <label>Сервисы, сек.<input name="service_interval_s" type="number" min="3" max="3600" step="1" required></label>
+        <label>Таймаут, сек.<input name="timeout_s" type="number" min="0.2" max="15" step="0.1" required></label>
+        <label>Одновременных сервисов<input name="concurrency" type="number" min="1" max="16" step="1" required></label>
+        <label>Точек истории на цель<input name="history_limit" type="number" min="20" max="2000" step="1" required></label>
+        <label class="toggle"><input name="notifications" type="checkbox"><span>Termux-уведомления об изменении интернета</span><small>Это отдельная опция для локального backend, не браузера.</small></label>
+      </div></fieldset>
+      <fieldset><legend>Опорные адреса</legend><p class="field-hint">Минимум два независимых HTTPS-адреса. Неожиданный ответ — диагностический частичный доступ.</p><div id="connectivity-editor" class="reference-editor"></div><button id="add-reference" class="button button-quiet" type="button">+ Добавить адрес</button></fieldset>
+      <p id="settings-form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions dialog-actions-split"><div><button id="export-config" class="button button-quiet" type="button" data-testid="export-button">Экспорт JSON</button><button id="start-import" class="button button-quiet" type="button">Импорт JSON</button><input id="import-file" type="file" accept="application/json,.json" hidden data-testid="import-input"></div><div><button class="button button-quiet" type="button" data-close="settings-dialog">Отмена</button><button class="button button-primary" type="submit" data-testid="settings-save">Сохранить настройки</button></div></div>
+    </form>
+  </dialog>
+
+  <dialog id="history-dialog" class="dialog dialog-wide" aria-labelledby="history-title">
+    <div class="dialog-header"><div><p class="eyebrow">Измерения</p><h2 id="history-title">История</h2><p id="history-subtitle" class="muted"></p></div><button class="icon-button" type="button" data-close="history-dialog" aria-label="Закрыть">×</button></div>
+    <div id="history-chart" class="chart" data-testid="history-chart" role="img" aria-label="График задержек"></div>
+    <ol id="history-list" class="history-list"></ol>
+    <div class="dialog-actions"><button class="button button-quiet" type="button" data-close="history-dialog">Закрыть</button></div>
+  </dialog>
+
+  <dialog id="import-dialog" class="dialog" aria-labelledby="import-title">
+    <div class="dialog-header"><div><p class="eyebrow">Импорт</p><h2 id="import-title">Применить конфигурацию?</h2></div><button class="icon-button" type="button" data-close="import-dialog" aria-label="Закрыть">×</button></div>
+    <p>Импорт полностью заменит текущие цели, опорные адреса и настройки. Проверьте адреса: конфигурация может содержать приватные VPS и VPN.</p>
+    <p id="import-summary" class="inline-note"></p>
+    <label class="toggle"><input id="confirm-import" type="checkbox"><span>Я понимаю, что текущая конфигурация будет заменена.</span></label>
+    <p id="import-error" class="form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button class="button button-quiet" type="button" data-close="import-dialog">Отмена</button><button id="apply-import" class="button button-danger" type="button" disabled>Заменить конфигурацию</button></div>
+  </dialog>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
