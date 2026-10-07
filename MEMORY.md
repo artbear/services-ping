@@ -116,6 +116,16 @@ GitHub Actions подготовлен: Python 3.10/3.12 на Linux/Windows/macOS
 В текущей локальной среде браузеры установлены в `/tmp/services-ping-browsers`:
 используйте `PLAYWRIGHT_BROWSERS_PATH=/tmp/services-ping-browsers npm run test:browser`.
 
+Стабильные frontend `data-testid` для браузерных проверок:
+`internet-banner`, `backend-disconnected`, `add-target`, `target-dialog`,
+`target-name`, `target-address`, `target-kind`, `target-group`, `target-save`,
+`settings-button`, `settings-dialog`, `settings-save`, `pause-button`,
+`check-button`, `import-input`, `export-button`.
+Карточки целей выбираются через `[data-target-id]`.
+Готовый сценарий: [tests/browser-smoke.mjs](tests/browser-smoke.mjs).
+Сообщение frontend-сабтреда подтверждает ранее учтённый smoke desktop/390 px;
+это не отдельный новый прогон тестов.
+
 Цикл и ссылки на исследовательские/реализационные/ревью сабтреды:
 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 При параллельной работе избегать перекрытия владельцев файлов: в первом цикле
