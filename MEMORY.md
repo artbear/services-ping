@@ -58,12 +58,12 @@
 
 ## Последнее проверенное состояние
 
-Код приложения сохранён в `d07eb6117b188551836a1df0f1c6714bdd4ee11e`;
-коммиты Markdown-памяти: `20c0b76` и `74497e4`.
+Код приложения с заголовком вкладки сохранён в
+`9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
-Приватный репозиторий GitHub: [artbear/services-ping](https://github.com/artbear/services-ping).
+Репозиторий GitHub: [artbear/services-ping](https://github.com/artbear/services-ping).
 Ветка `main` — ветка по умолчанию; последний опубликованный и проверенный SHA:
-`74497e46b36d9658621deb28e06231bab88d28e3`.
+`9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
 Реализованы CRUD целей, настройки опорных адресов и интервалов, HTTP/TCP/ICMP,
 история SVG, журнал событий, pause/manual check, уведомления, импорт/экспорт,
@@ -94,8 +94,8 @@ Playwright 1.63.0 / Chromium: 28 Python-тестов успешно; browser smo
 1440×1000 и 390×844 прошёл, включая «Есть интернет Services Ping»,
 «Частичный доступ Services Ping», «Нет интернета Services Ping» и сброс
 заголовка до «Services Ping» после потери связи с монитором. `node --check`
-и `git diff --check` прошли. SHA выше относится к публикации 2026-10-07;
-SHA этого изменения записывается после подтверждённого push.
+и `git diff --check` прошли. Push в `main` подтверждён: локальный и remote SHA
+совпадают, `9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
 ## Ограничения и следующие шаги
 
