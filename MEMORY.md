@@ -62,7 +62,7 @@
 `9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
 Репозиторий GitHub: [artbear/services-ping](https://github.com/artbear/services-ping).
-Ветка `main` — ветка по умолчанию; последний опубликованный и проверенный SHA:
+Ветка `main` — ветка по умолчанию. Проверенный SHA заголовка вкладки:
 `9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
 Реализованы CRUD целей, настройки опорных адресов и интервалов, HTTP/TCP/ICMP,
@@ -94,8 +94,8 @@ Playwright 1.63.0 / Chromium: 28 Python-тестов успешно; browser smo
 1440×1000 и 390×844 прошёл, включая «Есть интернет Services Ping»,
 «Частичный доступ Services Ping», «Нет интернета Services Ping» и сброс
 заголовка до «Services Ping» после потери связи с монитором. `node --check`
-и `git diff --check` прошли. Push в `main` подтверждён: локальный и remote SHA
-совпадают, `9c7996fe4b992eca04b169ba88973f894be5d1d8`.
+и `git diff --check` прошли. Push кода в `main` подтверждён:
+`9c7996fe4b992eca04b169ba88973f894be5d1d8`.
 
 ## Ограничения и следующие шаги
 
