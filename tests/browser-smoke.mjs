@@ -40,6 +40,7 @@ try {
     await waitUntil(async () => (await state()).internet.status === 'online', 'initial online');
     await page.getByTestId('internet-banner').waitFor();
     await page.getByTestId('backend-disconnected').waitFor({ state: 'hidden' });
+    await waitUntil(async () => (await page.title()) === 'Есть интернет Services Ping', 'initial online title');
     assert.equal(await page.locator('#empty-targets').isVisible(), false);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, 'no horizontal overflow');
 
@@ -71,12 +72,15 @@ try {
     await control('offline');
     await waitUntil(async () => (await state()).internet.status === 'offline', 'offline');
     await waitUntil(async () => /недоступ|нет интернет/i.test(await page.getByTestId('internet-banner').textContent()), 'offline banner');
+    await waitUntil(async () => (await page.title()) === 'Нет интернета Services Ping', 'offline title');
     assert.doesNotMatch(await page.locator('#connectivity-latency').textContent(), /0 мс/);
     await control('partial');
     await waitUntil(async () => (await state()).internet.status === 'partial', 'partial');
     await waitUntil(async () => /частич/i.test(await page.getByTestId('internet-banner').textContent()), 'partial banner');
+    await waitUntil(async () => (await page.title()) === 'Частичный доступ Services Ping', 'partial title');
     await control('online');
     await waitUntil(async () => (await state()).internet.status === 'online', 'recovery');
+    await waitUntil(async () => (await page.title()) === 'Есть интернет Services Ping', 'online title');
 
     await page.getByTestId('pause-button').click();
     await waitUntil(async () => (await state()).paused, 'pause');
@@ -133,11 +137,12 @@ try {
     if (viewport.width === 390) {
       await control('stop_backend');
       await page.getByTestId('backend-disconnected').waitFor({ state: 'visible', timeout: 12000 });
+      await waitUntil(async () => (await page.title()) === 'Services Ping', 'title drops internet claim when monitor is down');
     }
     await context.close(); context = null;
   }
   assert.deepEqual(errors, [], 'no JavaScript errors');
-  console.log('Browser smoke passed: desktop/mobile, CRUD, safe names, offline/partial/recovery, pause/manual, history, settings, export/import, backend-disconnected.');
+  console.log('Browser smoke passed: desktop/mobile, CRUD, safe names, offline/partial/recovery titles, pause/manual, history, settings, export/import, backend-disconnected.');
 } finally {
   await context?.close();
   await browser.close();

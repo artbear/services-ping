@@ -1,6 +1,6 @@
 # Память проекта Services Ping
 
-Последнее обновление: 2026-10-07.
+Последнее обновление: 2026-11-11.
 
 ## Задача и предпочтения пользователя
 
@@ -47,6 +47,11 @@
   16 HTTP workers и socket timeout 2 с. Импорт требует подтверждения в интерфейсе.
 - Browser notifications включаются отдельно от backend Termux notifier.
   Уведомления — о глобальном offline/восстановлении, с cooldown минимум 10 с.
+- Заголовок вкладки браузера показывает состояние интернета и суффикс
+  `Services Ping`: `online` — «Есть интернет», `partial` — «Частичный доступ»,
+  `offline` — «Нет интернета», `checking` — «Проверяем интернет». Если локальный
+  монитор недоступен, заголовок возвращается к «Services Ping» и не утверждает,
+  что интернета нет. Надпись на самой странице не дублирует этот префикс.
 
 Точный контракт: [docs/API.md](docs/API.md). Обоснования и исследование:
 [docs/PLAN.md](docs/PLAN.md), [docs/RESEARCH.md](docs/RESEARCH.md).
@@ -83,6 +88,14 @@
 Отчёты: [docs/CODE_REVIEW.md](docs/CODE_REVIEW.md),
 [docs/PLAN_REVIEW.md](docs/PLAN_REVIEW.md),
 [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+Проверка заголовка вкладки 2026-11-11, Linux, Python 3.11.2, Node.js 24.21.0,
+Playwright 1.63.0 / Chromium: 28 Python-тестов успешно; browser smoke на
+1440×1000 и 390×844 прошёл, включая «Есть интернет Services Ping»,
+«Частичный доступ Services Ping», «Нет интернета Services Ping» и сброс
+заголовка до «Services Ping» после потери связи с монитором. `node --check`
+и `git diff --check` прошли. SHA выше относится к публикации 2026-10-07;
+SHA этого изменения записывается после подтверждённого push.
 
 ## Ограничения и следующие шаги
 

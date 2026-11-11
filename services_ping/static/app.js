@@ -23,6 +23,8 @@
     pending: "Ожидает", up: "Работает", reachable: "Доступен", down: "Недоступен", blocked: "Доступ есть, запрет",
     rate_limited: "Ограничение запросов", error: "Ошибка", unsupported: "Не поддерживается", no_internet: "Нет интернета", disabled: "Отключена"
   };
+  const titlePrefix = { online: "Есть интернет", partial: "Частичный доступ", offline: "Нет интернета", checking: "Проверяем интернет" };
+  function setPageTitle(state) { const prefix = titlePrefix[state]; document.title = prefix ? `${prefix} Services Ping` : "Services Ping"; }
   class ApiError extends Error { constructor(message, status = 0) { super(message); this.status = status; } }
 
   function element(tag, className, text) {
@@ -86,6 +88,7 @@
   function renderInternet(internet) {
     const info = internet || { status: "checking", message: "Ожидаем состояние монитора" };
     const state = info.status || "checking";
+    setPageTitle(state);
     dom.connectivity.className = `connectivity-card is-${state}`;
     dom.connectivityTitle.textContent = ({ online: "Интернет доступен", partial: "Частичный доступ к интернету", offline: "Интернет недоступен по проверкам", checking: "Проверяем интернет…" })[state] || "Проверяем интернет…";
     dom.connectivityMessage.textContent = info.message || (state === "offline" ? "Это может быть DNS, фильтрация или captive portal, а не физическое отключение." : "Опрашиваем независимые опорные адреса");
@@ -157,7 +160,7 @@
     if (app.polling) return; app.polling = true;
     try { renderState(await api("/api/state")); }
     catch (error) {
-      if (!(error instanceof ApiError) || !error.status) { dom.backendBanner.hidden = false; dom.lastUpdate.textContent = "Нет связи с локальным монитором"; }
+      if (!(error instanceof ApiError) || !error.status) { dom.backendBanner.hidden = false; dom.lastUpdate.textContent = "Нет связи с локальным монитором"; setPageTitle(""); }
       else toast(cleanError(error), true);
     } finally { app.polling = false; schedulePoll(); }
   }
